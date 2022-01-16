@@ -1,0 +1,66 @@
+#bannerBox::before {
+    background: url("./static/img/shape-hero.svg");
+    /* background: url(${"static/src/img/main.jpg"}); */
+    z-index: -1;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    bottom: -1px;
+    content: "";
+    height: 101%;
+    left: -1%;
+    position: absolute;
+    top: -1px;
+    width: 102%;
+}
+#bannerBox::after{
+    background: linear-gradient(#61b0b7 0%, #b2e0fa 100%);
+    z-index: -2;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    bottom: -1px;
+    content: "";
+    height: 101%;
+    left: -1%;
+    position: absolute;
+    top: -1px;
+    width: 102%;
+}
+#bannerBox {
+    overflow: hidden;
+    position: relative;
+    z-index: 0;
+}
+#teamjoin::before{
+    background: rgba(17, 15, 36, 0.7);
+    z-index: -1;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    bottom: -1px;
+    content: "";
+    height: 101%;
+    left: -1%;
+    position: absolute;
+    top: -1px;
+    width: 102%;
+}
+#teamjoin::after{
+    background: url("./static/img/image-07@2x.jpg");
+    z-index: -2;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    bottom: -1px;
+    content: "";
+    height: 101%;
+    left: -1%;
+    position: absolute;
+    top: -1px;
+    width: 102%;
+}
+#teamjoin {
+    overflow: hidden;
+    position: relative;
+    z-index: 0;
+}

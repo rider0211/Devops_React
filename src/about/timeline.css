@@ -1,0 +1,12 @@
+.customtimeline::before{
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    background: #575bde;
+    border: 4px solid #fff;
+    content: "";
+    height: 1rem;
+    position: absolute;
+    margin-top: -12px;
+    width: 1rem;
+}
