@@ -5,6 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import { blue, grey } from '@mui/material/colors';
 
+import { useMsal } from "@azure/msal-react";
+import { loginRequest } from "../authConfig";
+
 const ColorButton = styled(Button)(({ theme }) => ({
   borderRadius:'40px',
   backgroundColor: 'rgba(77, 89, 149, 0.06)',
@@ -49,6 +52,20 @@ HideOnScroll.propTypes = {
   };
 const Header = (props) =>{
     const navigate = useNavigate();
+
+    const { instance } = useMsal();
+
+    const handleLogin = (loginType) => {
+        if (loginType === "popup") {
+            instance.loginPopup(loginRequest).catch(e => {
+                console.log(e);
+            });
+        } else if (loginType === "redirect") {
+            instance.loginRedirect(loginRequest).catch(e => {
+                console.log(e);
+            });
+        }
+    }
 
     return(
         <div>
@@ -136,9 +153,7 @@ const Header = (props) =>{
                     component="button"
                     variant="body3"
                     underline='none'
-                    onClick={() => {
-                        navigate('/login');
-                    }}
+                    onClick={() => handleLogin("popup")}
                     color={'white'}
                     sx={{
                         paddingLeft:"35px"
