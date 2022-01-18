@@ -38,7 +38,20 @@ export default function Pagemenu() {
 
 
 
-      <ColorButton
+
+
+        <ColorButton
+            id="basic-button"
+        >
+            Knoledge base
+        </ColorButton>
+
+        <ColorButton
+            id="basic-button"
+        >
+            Support
+        </ColorButton>
+        <ColorButton
         id="basic-button"
         aria-controls={open ? 'basic-menu' : undefined}
         aria-haspopup="true"
@@ -46,7 +59,7 @@ export default function Pagemenu() {
         onMouseOver={handleClick}
         onMouseOut={handleClose}
         >
-        Dashboard
+        Platform
         </ColorButton>
         <Menu
             id="basic-menu"
@@ -59,25 +72,12 @@ export default function Pagemenu() {
             sx={{
                 paddingTop:'8px',
                 marginTop:'50px',
-                marginLeft:'135px'
+                marginLeft:'330px'
             }}
         >
-        <MenuItem onClick={() => { navigate('/dashboard/budget');}}>Budget</MenuItem>
-        <MenuItem onClick={() => { navigate('/dashboard/ec2');}}>EC2 Intance</MenuItem>
-        <MenuItem onClick={() => { navigate('/dashboard/support');}}>Support</MenuItem>
+        <MenuItem onClick={() => { navigate('/platform/budget');}}>Budget</MenuItem>
+        <MenuItem onClick={() => { navigate('/platform/ec2summary');}}>EC2 Intance</MenuItem>
       </Menu>
-
-        <ColorButton
-            id="basic-button"
-        >
-            Knoledge base
-        </ColorButton>
-
-        <ColorButton
-            id="basic-button"
-        >
-            Plateform
-        </ColorButton>
     </div>
   );
 }
