@@ -7,6 +7,7 @@ import React from "react";
 // Layouts
 import Landingpage from "./landingpage";
 import Calendar from "./pages/calendar";
+import BudgetDashboard from "./pages/dashboard/budget";
 import Contact from './pages/contact';
 import About from './about';
 
@@ -15,6 +16,11 @@ const routes = [
     path: "/",
     element: <Landingpage />,
   },
+  {
+    path: "/dashboard/budget",
+    element: <BudgetDashboard />,
+  },
+  
   {
     path: "/contact",
     element: <Contact />,

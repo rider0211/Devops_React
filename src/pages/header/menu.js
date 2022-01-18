@@ -4,16 +4,21 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { styled } from '@mui/material/styles';
 import { blue, grey } from '@mui/material/colors';
+import { useNavigate } from 'react-router-dom';
 
 export default function Pagemenu() {
+  const navigate = useNavigate();
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = () => {
+
+  const handleClose = (event) => {
     setAnchorEl(null);
   };
+
   const ColorButton = styled(Button)(({ theme }) => ({
     backgroundColor: 'rgba(77, 89, 149, 0.06)',
     fontSize: '13px',
@@ -31,14 +36,9 @@ export default function Pagemenu() {
   return (
     <div>
 
-        <ColorButton
-            id="basic-button"
-        >
-            Knoledge base
-        </ColorButton>
 
 
-        <ColorButton
+      <ColorButton
         id="basic-button"
         aria-controls={open ? 'basic-menu' : undefined}
         aria-haspopup="true"
@@ -46,7 +46,7 @@ export default function Pagemenu() {
         onMouseOver={handleClick}
         onMouseOut={handleClose}
         >
-        Support
+        Dashboard
         </ColorButton>
         <Menu
             id="basic-menu"
@@ -59,13 +59,19 @@ export default function Pagemenu() {
             sx={{
                 paddingTop:'8px',
                 marginTop:'50px',
-                marginLeft:'250px'
+                marginLeft:'135px'
             }}
         >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
-        <MenuItem onClick={handleClose}>My account</MenuItem>
-        <MenuItem onClick={handleClose}>Logout</MenuItem>
+        <MenuItem onClick={() => { navigate('/dashboard/budget');}}>Budget</MenuItem>
+        <MenuItem onClick={() => { navigate('/dashboard/ec2');}}>EC2 Intance</MenuItem>
+        <MenuItem onClick={() => { navigate('/dashboard/support');}}>Support</MenuItem>
       </Menu>
+
+        <ColorButton
+            id="basic-button"
+        >
+            Knoledge base
+        </ColorButton>
 
         <ColorButton
             id="basic-button"

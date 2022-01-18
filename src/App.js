@@ -1,5 +1,6 @@
 import React from 'react';
 import { useRoutes, BrowserRouter as Router } from "react-router-dom";
+import { HelmetProvider, Helmet } from "react-helmet-async";
 
 import routes from "./routes";
 import './style/App.css';
@@ -13,9 +14,15 @@ const AppRouter = () => {
 
 function App() {
   return (
-    <Router>
-      <AppRouter />  
-    </Router>
+    <HelmetProvider>
+      <Helmet
+        titleTemplate="%s | Material App"
+        defaultTitle="Material App - React Admin & Dashboard Template"
+      />
+      <Router>
+        <AppRouter />  
+      </Router>
+    </HelmetProvider>
   )
 }
 

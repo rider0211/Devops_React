@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import Header from '../header';
+import Header from '../../header';
+import Footer from '../../footer';
 import Content from './content';
-import Footer from '../footer';
-import Box from '@mui/material/Box';
 
-const Contact = () =>{
+const Budget = () =>{
 
     const [winheight, setHeight] = useState(0);
     
@@ -26,4 +25,4 @@ const Contact = () =>{
 
     );
 }
-export default Contact;
+export default Budget;
