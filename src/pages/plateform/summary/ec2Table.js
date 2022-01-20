@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useState, useContext, useEffect} from 'react';
 import {
     CardHeader,
     Avatar,
@@ -19,6 +20,7 @@ import DnsIcon from '@mui/icons-material/Dns';
 import {red,} from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
 import { tableCellClasses  } from "@mui/material/TableCell";
+import {Ec2CountDataContext} from './content';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -46,37 +48,55 @@ const columns = [
   { id: 'stopIns', label: 'Stopping Instance', minWidth: 100 },
 ];
 
-function createData(region, runningIns, stopIns) {
-  return { region, runningIns, stopIns};
-}
+// function createData(_id, region, runningIns, stopIns) {
+//   return {_id, region, runningIns, stopIns};
+// }
 
-const rows = [
-  createData('us-este-1',  1324171354, 3287263),
-  createData('us-este-2',  1324171354, 3287263),
-  createData('us-este-3',  1324171354, 3287263),
-  createData('us-este-4',  1324171354, 3287263),
-  createData('us-este-5',  1324171354, 3287263),
-  createData('us-este-6',  1324171354, 3287263),
-  createData('us-este-7',  1324171354, 3287263),
-  createData('us-este-8',  1324171354, 3287263),
-  createData('us-este-9',  1324171354, 3287263),
-  createData('us-este-10', 1324171354, 3287263),
-  createData('us-este-11', 1324171354, 3287263),
-];
-
-export default function Ec2Table() {
+export default function Ec2Table(props) {
+  const countData = useContext(Ec2CountDataContext);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [tableRows, setTableRows] = useState([]);
+  var rows = [];
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-
+  const createData = (_id, region, runningIns, stopIns) =>{
+    return {_id, region, runningIns, stopIns};
+  }
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
 
+  useEffect(() => {
+    var data = countData.ec2countdata;
+    console.log(data);
+    for(var i = 0; i < data.length; i++){
+      rows.push(createData(data[i]._id, data[i].Region, data[i].Running, data[i].Stopped));
+    }
+    setTableRows(rows);
+  },[countData.ec2countdata]);
+
+  const renderData = () => {
+    return tableRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+        return (
+        <StyledTableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+            {columns.map((column) => {
+            const value = row[column.id];
+            return (
+                <StyledTableCell key={column.id} align={column.align}>
+                {column.format && typeof value === 'number'
+                    ? column.format(value)
+                    : value}
+                </StyledTableCell>
+            );
+            })}
+        </StyledTableRow>
+        );
+    });
+  }
   return (
         <Card sx={{maxHeight:500, boxShadow:'0px 0px 30px 10px rgb(82 63 105 / 15%)'}}>
             <CardHeader
@@ -116,31 +136,14 @@ export default function Ec2Table() {
                                 </StyledTableRow>
                             </TableHead>
                             <TableBody>
-                                {rows
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((row) => {
-                                    return (
-                                    <StyledTableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                                        {columns.map((column) => {
-                                        const value = row[column.id];
-                                        return (
-                                            <StyledTableCell key={column.id} align={column.align}>
-                                            {column.format && typeof value === 'number'
-                                                ? column.format(value)
-                                                : value}
-                                            </StyledTableCell>
-                                        );
-                                        })}
-                                    </StyledTableRow>
-                                    );
-                                })}
+                                {renderData()}
                             </TableBody>
                             </Table>
                         </TableContainer>
                         <TablePagination
                             rowsPerPageOptions={[10, 25, 100]}
                             component="div"
-                            count={rows.length}
+                            count={tableRows.length}
                             rowsPerPage={rowsPerPage}
                             page={page}
                             onPageChange={handleChangePage}

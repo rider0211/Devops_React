@@ -1,4 +1,4 @@
-import * as React from 'react';
+import {React, useState, useEffect, useContext} from 'react';
 import {
     CardHeader,
     Avatar,
@@ -19,6 +19,7 @@ import StorageIcon from '@mui/icons-material/Storage';
 import {red,} from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
 import { tableCellClasses  } from "@mui/material/TableCell";
+import {Ec2CountDataContext} from './content';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -53,21 +54,21 @@ function createData(instanceId, instanceType, ipAddress, keyName, lamInstancePro
   return {instanceId, instanceType, ipAddress, keyName, lamInstanceProfile, abilityZone};
 }
 
-const rows = [
-  createData('i-0e2e36d7f1bc2f9f7', 't3.medium', '92.168.171.213', 'jupiter','arn:aws:iam::84914857:instance-profile/CustomerManaged','Us–east-1'),
-  createData('i-0e2e36d7f1bc2f9f7', 't3.medium', '92.168.171.213', 'jupiter','arn:aws:iam::84914857:instance-profile/CustomerManaged','Us–east-1'),
-  createData('i-0e2e36d7f1bc2f9f7', 't3.medium', '92.168.171.213', 'jupiter','arn:aws:iam::84914857:instance-profile/CustomerManaged','Us–east-1'),
-  createData('i-0e2e36d7f1bc2f9f7', 't3.medium', '92.168.171.213', 'jupiter','arn:aws:iam::84914857:instance-profile/CustomerManaged','Us–east-1'),
-  createData('i-0e2e36d7f1bc2f9f7', 't3.medium', '92.168.171.213', 'jupiter','arn:aws:iam::84914857:instance-profile/CustomerManaged','Us–east-1'),
-  createData('i-0e2e36d7f1bc2f9f7', 't3.medium', '92.168.171.213', 'jupiter','arn:aws:iam::84914857:instance-profile/CustomerManaged','Us–east-1'),
-  createData('i-0e2e36d7f1bc2f9f7', 't3.medium', '92.168.171.213', 'jupiter','arn:aws:iam::84914857:instance-profile/CustomerManaged','Us–east-1'),
-  createData('i-0e2e36d7f1bc2f9f7', 't3.medium', '92.168.171.213', 'jupiter','arn:aws:iam::84914857:instance-profile/CustomerManaged','Us–east-1'),
-  createData('i-0e2e36d7f1bc2f9f7', 't3.medium', '92.168.171.213', 'jupiter','arn:aws:iam::84914857:instance-profile/CustomerManaged','Us–east-1'),
-];
 
-export default function Ec2Detail() {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+export default function Ec2Detail(prop) {
+  const instanceData = useContext(Ec2CountDataContext);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [ec2data, setEc2Data] = useState([]);
+  var rows = [];
+
+  useEffect( () => {
+    var data = instanceData.ec2instancedata;
+    for(var i = 0; i < data.length; i++){
+      rows.push(createData(data[i].instanceId, data[i].instanceType, data[i].ipv4, data[i].keyName, data[i].iamInstanceProfile, data[i].abilityZone));
+    }
+    setEc2Data(rows);
+  },[instanceData.ec2instancedata]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -79,7 +80,7 @@ export default function Ec2Detail() {
   };
 
   return (
-        <Card sx={{maxHeight:500, marginTop:'50px', marginBottom:'100px', boxShadow:'0px 0px 30px 10px rgb(82 63 105 / 15%)'}}>
+        <Card sx={{maxHeight:500, marginBottom:'100px', boxShadow:'0px 0px 30px 10px rgb(82 63 105 / 15%)'}}>
             <CardHeader
                 avatar={
                 <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -117,7 +118,7 @@ export default function Ec2Detail() {
                                 </StyledTableRow>
                             </TableHead>
                             <TableBody>
-                                {rows
+                                {ec2data
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row) => {
                                     return (
@@ -141,7 +142,7 @@ export default function Ec2Detail() {
                         <TablePagination
                             rowsPerPageOptions={[10, 25, 100]}
                             component="div"
-                            count={rows.length}
+                            count={ec2data.length}
                             rowsPerPage={rowsPerPage}
                             page={page}
                             onPageChange={handleChangePage}

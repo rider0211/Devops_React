@@ -14,7 +14,7 @@ const Summary = () =>{
         <div
             style={{flexDirection: 'column', justifyContent:'space-between', alignItems:"stretch", flex: 1}}
         >
-            <div style={{flex: 1, height: winheight+'px'}}>
+            <div style={{flex: 1}}>
                 <Header />
                 <Content />
             </div>
