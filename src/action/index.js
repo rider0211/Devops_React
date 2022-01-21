@@ -24,4 +24,38 @@ axios.post(`${ROOT_URL}/plateform/getAllEc2Instance`)
 });
 return data;
 }
-  
+export function getM2dData(res, month){
+    const d = new Date();
+
+    if(!month){
+        month = d.getMonth()+1;
+    }
+    axios.post(`${ROOT_URL}/budget/getM2dDataByMonth`,{month: month})
+    .then(response => {
+        res({data: response});
+    })
+    .catch(() => {
+    });
+}
+export function getY2mData(res, year){
+    const d = new Date();
+    if(!year){
+        year = d.getFullYear();
+    }
+    axios.post(`${ROOT_URL}/budget/getY2mGetData`,{year: year})
+    .then(response => {
+        res({data: response});
+    })
+    .catch(() => {
+    });
+}
+export function getLtsData(res, month){
+    const d = new Date();
+    
+    axios.post(`${ROOT_URL}/budget/getLtsData`,{month: month})
+    .then(response => {
+        res({data: response});
+    })
+    .catch(() => {
+    });
+}

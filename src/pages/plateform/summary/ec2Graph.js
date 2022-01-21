@@ -143,6 +143,7 @@ const Ec2Graph = () =>{
           var stoppedmax = Math.max(...stoppeddata);
 
           var max = runningmax>stoppedmax? runningmax:stoppedmax;
+          setValue([0,max]);
           setMax(max);
 
     },[ec2countdata]);

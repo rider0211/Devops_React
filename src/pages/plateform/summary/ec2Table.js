@@ -72,7 +72,6 @@ export default function Ec2Table(props) {
 
   useEffect(() => {
     var data = countData.ec2countdata;
-    console.log(data);
     for(var i = 0; i < data.length; i++){
       rows.push(createData(data[i]._id, data[i].Region, data[i].Running, data[i].Stopped));
     }
@@ -80,9 +79,9 @@ export default function Ec2Table(props) {
   },[countData.ec2countdata]);
 
   const renderData = () => {
-    return tableRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+    return tableRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row,index) => {
         return (
-        <StyledTableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+        <StyledTableRow hover role="checkbox" tabIndex={-1} key={index}>
             {columns.map((column) => {
             const value = row[column.id];
             return (
@@ -124,9 +123,9 @@ export default function Ec2Table(props) {
                             <Table stickyHeader aria-label="sticky table">
                             <TableHead>
                                 <StyledTableRow>
-                                {columns.map((column) => (
+                                {columns.map((column,index) => (
                                     <StyledTableCell
-                                    key={column.id}
+                                    key={index}
                                     align={column.align}
                                     style={{ minWidth: column.minWidth }}
                                     >

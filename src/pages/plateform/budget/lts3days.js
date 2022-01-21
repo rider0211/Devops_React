@@ -19,6 +19,7 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import {red,} from '@mui/material/colors';
 import { styled } from '@mui/material/styles';
 import { tableCellClasses  } from "@mui/material/TableCell";
+import {BudgetDataContext} from './content';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -39,7 +40,6 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
       border: 0,
     },
   }));
-  
 const columns = [
   { id: 'service', label: 'Service', minWidth: 170 },
   { id: 'third', label: '01/02/2022', minWidth: 100 },
@@ -67,31 +67,18 @@ const columns = [
 ];
 
 function createData(service, third, second, first) {
-  const total = second / first;
+  const total = third+second+first;
   return { service, third, second, first, total };
 }
 
-const rows = [
-  createData('India', 'IN', 1324171354, 3287263),
-  createData('China', 'CN', 1403500365, 9596961),
-  createData('Italy', 'IT', 60483973, 301340),
-  createData('United States', 'US', 327167434, 9833520),
-  createData('Canada', 'CA', 37602103, 9984670),
-  createData('Australia', 'AU', 25475400, 7692024),
-  createData('Germany', 'DE', 83019200, 357578),
-  createData('Ireland', 'IE', 4857000, 70273),
-  createData('Mexico', 'MX', 126577691, 1972550),
-  createData('Japan', 'JP', 126317000, 377973),
-  createData('France', 'FR', 67022000, 640679),
-  createData('United Kingdom', 'GB', 67545757, 242495),
-  createData('Russia', 'RU', 146793744, 17098246),
-  createData('Nigeria', 'NG', 200962417, 923768),
-  createData('Brazil', 'BR', 210147125, 8515767),
-];
+var rows = [];
 
 export default function Lts3days() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [tableData, setTableData] = React.useState([]);
+  const budgetData = React.useContext(BudgetDataContext);
+
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -102,8 +89,14 @@ export default function Lts3days() {
     setPage(0);
   };
 
+  React.useEffect( () => {
+    var data = budgetData.ltsData;
+    setTableData(data);
+    rows = data;
+  },[budgetData]);
+  
   return (
-        <Card sx={{maxHeight:500, marginTop:'50px', marginBottom:'100px', boxShadow:'0px 0px 30px 10px rgb(82 63 105 / 15%)'}}>
+        <Card sx={{maxHeight:600, marginTop:'50px', marginBottom:'100px', boxShadow:'0px 0px 30px 10px rgb(82 63 105 / 15%)'}}>
             <CardHeader
                 avatar={
                 <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -141,12 +134,14 @@ export default function Lts3days() {
                                 </StyledTableRow>
                             </TableHead>
                             <TableBody>
-                                {rows
+                                {tableData
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((row) => {
+                                .map((row,index) => {
+
                                     return (
-                                    <StyledTableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                                        {columns.map((column) => {
+                                    <StyledTableRow hover role="checkbox" tabIndex={-1} key={index}>
+                                        {
+                                        columns.map((column) => {
                                         const value = row[column.id];
                                         return (
                                             <StyledTableCell key={column.id} align={column.align}>
@@ -156,6 +151,7 @@ export default function Lts3days() {
                                             </StyledTableCell>
                                         );
                                         })}
+
                                     </StyledTableRow>
                                     );
                                 })}
@@ -165,7 +161,7 @@ export default function Lts3days() {
                         <TablePagination
                             rowsPerPageOptions={[10, 25, 100]}
                             component="div"
-                            count={rows.length}
+                            count={tableData.length}
                             rowsPerPage={rowsPerPage}
                             page={page}
                             onPageChange={handleChangePage}

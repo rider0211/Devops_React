@@ -65,7 +65,7 @@ export default function Ec2Detail(prop) {
   useEffect( () => {
     var data = instanceData.ec2instancedata;
     for(var i = 0; i < data.length; i++){
-      rows.push(createData(data[i].instanceId, data[i].instanceType, data[i].ipv4, data[i].keyName, data[i].iamInstanceProfile, data[i].abilityZone));
+      rows.push(createData(data[i].instanceId, data[i].instance_type, data[i].ipv4, data[i].keyName, data[i].iamInstanceProfile, data[i].availability_zone));
     }
     setEc2Data(rows);
   },[instanceData.ec2instancedata]);
@@ -120,9 +120,9 @@ export default function Ec2Detail(prop) {
                             <TableBody>
                                 {ec2data
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((row) => {
+                                .map((row,index) => {
                                     return (
-                                    <StyledTableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                                    <StyledTableRow hover role="checkbox" tabIndex={-1} key={index}>
                                         {columns.map((column) => {
                                         const value = row[column.id];
                                         return (

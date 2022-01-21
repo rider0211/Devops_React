@@ -1,4 +1,4 @@
-import React, { StrictMode } from 'react';
+import React, { StrictMode, useState, useEffect, createContext } from 'react';
 import {
     Button, Grid, Container, Box
 } from '@mui/material';
@@ -9,7 +9,9 @@ import { blue, grey } from '@mui/material/colors';
 import M2dchart from "./m2dChart";
 import Y2mchart from "./y2mChart";
 import Lts3days from './lts3days';
-
+import { getM2dData, getY2mData, getLtsData} from '../../../action';
+import jwt_decode from 'jwt-decode';
+import * as configs from '../../../config/config';
 
   const ColorButton = styled(Button)(({ theme }) => ({
     backgroundColor: blue[100],
@@ -25,8 +27,30 @@ import Lts3days from './lts3days';
     textTransform:'none'
     }));
 
+export const BudgetDataContext = createContext();
+
 const Content = () =>{
+  
+  const [m2dChartData, setm2dChartData] = useState([]);
+  const [y2mChartData, sety2mChartData] = useState([]);
+  const [ltsData, setLtsData]           = useState([]);
+  useEffect(()=>{
+    getM2dData( (res) => {
+      var data = jwt_decode(res.data.data, configs.secret);
+      setm2dChartData(data);
+    });
+    getY2mData( (res) => {
+      var data = jwt_decode(res.data.data, configs.secret);
+      sety2mChartData(data);
+    });
+    getLtsData( (res) => {
+      var data = jwt_decode(res.data.data, configs.secret);
+      setLtsData(data);
+    })
+  },[]);
+
     return(
+      <BudgetDataContext.Provider value={{m2dChartData,y2mChartData,ltsData}}>
         <Container maxWidth="lg"  sx={{marginTop:'30px'}}>
           <Box>
             <StrictMode>
@@ -46,6 +70,7 @@ const Content = () =>{
             </StrictMode>
           </Box>
         </Container>
+      </BudgetDataContext.Provider>
     );
 }
 export default Content;

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import { Doughnut } from "react-chartjs-2";
 import {
     Card,
@@ -22,65 +22,46 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import {red,} from '@mui/material/colors';
 import {Chart, ArcElement} from 'chart.js';
 import DonutLargeIcon from '@mui/icons-material/DonutLarge';
+import {BudgetDataContext} from './content';
 
 Chart.register(ArcElement);
 const origindata = {
-    labels: ["Red", "Green", "Yellow", "Color 1", "Color 2", "Color 3"],
+    labels: [""],
     
     datasets: [
       {
-        data: [300, 50, 100, 20, 80, 200],
-        backgroundColor: [
-          "#FF6384",
-          "#36A2EB",
-          "#FFCE56",
-          "#db3d44",
-          "#4257b2",
-          "#FFCE56"
-        ],
-        hoverBackgroundColor: [
-          "#4257b2",
-          "#36A2EB",
-          "#FFCE56",
-          "#db3d44",
-          "#4257b2",
-          "#36A2EB"
-        ]
+        data: [0],
+        backgroundColor: [],
+        hoverBackgroundColor: []
       }
     ]
   };
 const options = {
+    responsive : true,
     plugins: {
       legend: {
         display: false,
       },
     },
     aspectRatio:'70%',
-    cutout: "50%",
+    cutout: "70%",
   };
 const columns = [
 
     { 
-        id: 'color',
-        label: 'Color',
+        id: 'service',
+        label: 'Service',
         align: 'center',},
     { 
-        id: 'value',
-        label: 'Value',
+        id: 'cost',
+        label: 'Cost',
         align: 'center',},
   ];
-  function createData(color, value) {
-    return { color, value};
+  function createData(service, cost) {
+    return { service, cost};
   }
 
-  const originrows = [
-    createData('red', 300),
-    createData('green', 50),
-    createData('yellow', 100),
-    createData('color 1', 20),
-    createData('color 2', 80),
-    createData('color 3', 200),
-  ];
+  let originrows = [];
 
   const StyledTableCell = styled(TableCell)(() => ({
     [`&.${tableCellClasses.head}`]: {
@@ -95,45 +76,53 @@ const columns = [
   function valuetext(value) {
     return `${value}°C`;
   }
-
+  function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
 const M2dchart = () =>{
     
     const[chatdata, setChartData] = useState(origindata);
-    const [value, setValue] = React.useState([20, 50]);
+    const [value, setValue] = React.useState([0, 100]);
     const [max, setMax] = useState(0);
-    const [tabledata, setTableData] = useState(originrows)
+    const [tabledata, setTableData] = useState(originrows);
+    const budgetData = useContext(BudgetDataContext);
+
 
     const handleChange = (event, newValue) => {
-        var filterdata = origindata.datasets[0].data.filter(checkCondition);
-        var filterTblData = originrows.filter(checkTblCondition);
-        const statedata = {
-            labels: ["Red", "Green", "Yellow", "Color 1", "Color 2", "Color 3"],
-            
-            datasets: [
-              {
-                data: filterdata,
-                backgroundColor: [
-                  "#FF6384",
-                  "#36A2EB",
-                  "#FFCE56",
-                  "#db3d44",
-                  "#4257b2",
-                  "#FFCE56"
-                ],
-                hoverBackgroundColor: [
-                  "#4257b2",
-                  "#36A2EB",
-                  "#FFCE56",
-                  "#db3d44",
-                  "#4257b2",
-                  "#36A2EB"
-                ]
-              }
-            ]
-          };
-        setChartData(statedata);
-        setTableData(filterTblData);
-        setValue(newValue);
+      var filterData = [];
+      var labels = [];
+      origindata.datasets[0].data.forEach((value, index)=>{
+        var i = checkCondition(value)? value:0;
+        filterData.push(i);
+        labels.push(origindata.labels[index]);
+      })
+      var backgroundColor = [];
+      var hoverBackgroundColor = [];
+
+      for(var i = 0; i < filterData.length; i++){
+        backgroundColor.push(getRandomColor());
+        hoverBackgroundColor.push(getRandomColor());
+      }
+
+      const statedata = {
+          labels: labels,
+          datasets: [
+            {
+              data: filterData,
+              backgroundColor: backgroundColor,
+              hoverBackgroundColor: hoverBackgroundColor
+            }
+          ]
+        };
+      setChartData(statedata);
+      var filterTblData = originrows.filter(checkTblCondition);
+      setTableData(filterTblData);
+      setValue(newValue);
     };
     const checkCondition = (each) =>{
         var min = value[0];
@@ -143,15 +132,50 @@ const M2dchart = () =>{
     const checkTblCondition = (each) =>{
       var min = value[0];
       var max = value[1];
-    return each.value >= min && each.value <= max;
+    return each.cost >= min && each.cost <= max;
   }
     
 
     useEffect(() => {
-        var data = chatdata.datasets[0].data;
-        var max = Math.max(...data);
+        originrows = [];
+        var data = budgetData.m2dChartData;
+        var cost = [];
+        var services = [];
+        var backgroundColor = [];
+        var hoverBackgroundColor = [];
+        for (var i = 0; i < data.length; i++){
+          cost.push(data[i].cost);
+          services.push(data[i].service);
+          backgroundColor.push(getRandomColor());
+          hoverBackgroundColor.push(getRandomColor());
+        }
+        origindata.labels = services;
+        origindata.datasets[0].data = cost;
+        origindata.datasets[0].backgroundColor = backgroundColor;
+        origindata.datasets[0].hoverBackgroundColor = hoverBackgroundColor;
+
+        const statedata = {
+          labels: services,
+          datasets: [
+            {
+              data: cost,
+              backgroundColor: backgroundColor,
+              hoverBackgroundColor: hoverBackgroundColor
+            }
+          ]
+        };
+        setChartData(statedata);
+
+        for(var j = 0; j < data.length; j++){
+          originrows.push(createData(services[j], cost[j]));
+        }
+        setTableData(originrows);
+
+        var tempdata = statedata.datasets[0].data;
+        var max = Math.max(...tempdata);
+        setValue([0, max]);
         setMax(max);
-    }, [])
+    }, [budgetData]);
     return (
         
         <Card sx={{maxHeight:500, boxShadow:'0px 0px 30px 10px rgb(82 63 105 / 15%)'}}>
@@ -181,7 +205,7 @@ const M2dchart = () =>{
                     </Grid>
                     <Box style={{width:'inherit'}} sx={{ width: 300, paddingLeft:'20px', paddingRight:'20px' }}>
                         <Slider
-                            getAriaLabel={() => 'Temperature range'}
+                            getAriaLabel={() => 'cost range'}
                             value={value}
                             onChange={handleChange}
                             valueLabelDisplay="auto"
@@ -206,13 +230,13 @@ const M2dchart = () =>{
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                        {tabledata.map((row) => (
+                        {tabledata.map((row,index) => (
                             <TableRow
-                            key={row.name}
+                            key={index}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
-                            <StyledTableCell align="center">{row.color}</StyledTableCell>
-                            <StyledTableCell align="center">{row.value}</StyledTableCell>
+                            <StyledTableCell align="center">{row.service}</StyledTableCell>
+                            <StyledTableCell align="center">${row.cost}</StyledTableCell>
                             </TableRow>
                         ))}
                         </TableBody>
