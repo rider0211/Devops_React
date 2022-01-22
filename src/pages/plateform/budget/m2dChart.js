@@ -25,6 +25,7 @@ import DonutLargeIcon from '@mui/icons-material/DonutLarge';
 import {BudgetDataContext} from './content';
 
 Chart.register(ArcElement);
+
 const origindata = {
     labels: [""],
     
@@ -34,14 +35,23 @@ const origindata = {
         backgroundColor: [],
         hoverBackgroundColor: []
       }
-    ]
+    ],
   };
-const options = {
-    responsive : true,
+var options = {
+  elements: {
+    center: {
+      text: "$0"
+    }
+  },
+  responsive: true,
     plugins: {
       legend: {
         display: false,
       },
+    },
+    centerText: {
+        display: true,
+        text: `90%`
     },
     aspectRatio:'70%',
     cutout: "70%",
@@ -60,6 +70,8 @@ const columns = [
   function createData(service, cost) {
     return { service, cost};
   }
+
+
 
   let originrows = [];
 
@@ -85,13 +97,30 @@ const columns = [
     return color;
   }
 const M2dchart = () =>{
-    
+
+  var plugins = [{
+    beforeDraw: function(chart) {
+      var width = chart.width,
+      height = chart.height,
+      ctx = chart.ctx;
+      ctx.restore();
+      var fontSize = (height / 114).toFixed(2);
+      ctx.font = fontSize + "em sans-serif";
+      ctx.textBaseline = "middle";
+      var text = chart.config.options.elements.center.text,
+          textX = Math.round((width - ctx.measureText(text).width) / 2),
+          textY = height / 2;
+      ctx.fillText(text, textX, textY);
+      ctx.save();
+    } 
+  }]
+
     const[chatdata, setChartData] = useState(origindata);
     const [value, setValue] = React.useState([0, 100]);
     const [max, setMax] = useState(0);
     const [tabledata, setTableData] = useState(originrows);
     const budgetData = useContext(BudgetDataContext);
-
+    
 
     const handleChange = (event, newValue) => {
       var filterData = [];
@@ -103,11 +132,16 @@ const M2dchart = () =>{
       })
       var backgroundColor = [];
       var hoverBackgroundColor = [];
-
+      var sum = 0;
       for(var i = 0; i < filterData.length; i++){
+        sum += filterData[i];
         backgroundColor.push(getRandomColor());
         hoverBackgroundColor.push(getRandomColor());
       }
+
+      sum = Number((sum).toFixed(2));
+
+      options.elements.center.text = '$' + sum;
 
       const statedata = {
           labels: labels,
@@ -143,7 +177,9 @@ const M2dchart = () =>{
         var services = [];
         var backgroundColor = [];
         var hoverBackgroundColor = [];
+        var sum = 0;
         for (var i = 0; i < data.length; i++){
+          sum += data[i].cost;
           cost.push(data[i].cost);
           services.push(data[i].service);
           backgroundColor.push(getRandomColor());
@@ -162,7 +198,7 @@ const M2dchart = () =>{
               backgroundColor: backgroundColor,
               hoverBackgroundColor: hoverBackgroundColor
             }
-          ]
+          ],
         };
         setChartData(statedata);
 
@@ -170,6 +206,10 @@ const M2dchart = () =>{
           originrows.push(createData(services[j], cost[j]));
         }
         setTableData(originrows);
+        
+        sum = Number((sum).toFixed(2));
+
+        options.elements.center.text = '$' + sum;
 
         var tempdata = statedata.datasets[0].data;
         var max = Math.max(...tempdata);
@@ -201,7 +241,7 @@ const M2dchart = () =>{
                     justifyContent={'flex-start'} 
                     alignItems={'center'}>
                     <Grid item lg={3}>
-                        <Doughnut data={chatdata} options={options}/>
+                        <Doughnut data={chatdata} options={options} plugins={plugins}/>
                     </Grid>
                     <Box style={{width:'inherit'}} sx={{ width: 300, paddingLeft:'20px', paddingRight:'20px' }}>
                         <Slider
