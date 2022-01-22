@@ -21,6 +21,14 @@ import { styled } from '@mui/material/styles';
 import { tableCellClasses  } from "@mui/material/TableCell";
 import {BudgetDataContext} from './content';
 
+const getOnlyDate = (param) =>{
+    var today = new Date();
+    var dd = String(today. getDate() - param). padStart(2, '0');
+    var mm = String(today. getMonth() + 1). padStart(2, '0'); //January is 0!
+    var yyyy = today. getFullYear();
+    return today = mm + '/' + dd + '/' + yyyy;
+}
+
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: theme.palette.common.black,
@@ -41,36 +49,17 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     },
   }));
 const columns = [
-  { id: 'service', label: 'Service', minWidth: 170 },
-  { id: 'third', label: '01/02/2022', minWidth: 100 },
-  {
-    id: 'second',
-    label: '01/03/2022',
-    minWidth: 170,
-    align: 'center',
-    format: (value) => value.toLocaleString('en-US'),
-  },
-  {
-    id: 'first',
-    label: '01/04/2022',
-    minWidth: 170,
-    align: 'center',
-    format: (value) => value.toLocaleString('en-US'),
-  },
-  {
-    id: 'total',
-    label: 'Total',
-    minWidth: 170,
-    align: 'center',
-    format: (value) => value.toFixed(2),
-  },
+  { id: 'service',  label: 'Service',     minWidth: 170,  align: 'center'},
+  { id: 'third',    label: getOnlyDate(3),  minWidth: 100,  align: 'center'},
+  { id: 'second',   label: getOnlyDate(2),  minWidth: 170,  align: 'center'},
+  { id: 'first',    label: getOnlyDate(1),  minWidth: 170,  align: 'center'},
+  { id: 'total',    label: 'Total',       minWidth: 170,  align: 'center'},
 ];
 
 function createData(service, third, second, first) {
   const total = third+second+first;
   return { service, third, second, first, total };
 }
-
 var rows = [];
 
 export default function Lts3days() {
@@ -108,7 +97,7 @@ export default function Lts3days() {
                     <MoreVertIcon />
                 </IconButton>
                 }
-                title={<Typography variant='h5'>Cost by Service</Typography>}
+                title={<Typography variant='h5'>Cost by Service ($)</Typography>}
             />
             <CardContent>
                 <Grid 
